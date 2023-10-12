@@ -88,7 +88,7 @@ public class QueueCommand extends BaseCommand implements SimpleCommand {
 
         player.createConnectionRequest(queue.getServer()).connect().thenAccept(result -> {
             if (result.isSuccessful()) {
-                player.sendMessage(Component.text("You have been sent to " + queue.getServerFormatted() + ".", NamedTextColor.GREEN));
+                //player.sendMessage(Component.text("You have been sent to " + queue.getServerFormatted() + ".", NamedTextColor.GREEN));
                 invocation.source().sendMessage(Component.text(player.getUsername() + " has been sent to " + queue.getServerFormatted() + ".", NamedTextColor.GREEN));
             }
         });

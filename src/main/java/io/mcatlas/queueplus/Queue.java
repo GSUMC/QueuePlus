@@ -5,6 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import io.mcatlas.queueplus.object.Ratio;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -41,7 +42,7 @@ public class Queue {
         String name = server.getServerInfo().getName();
         this.name = name.toLowerCase();
 
-        this.formattedName = name.substring(0, 1).toUpperCase() + name.substring(1);
+        this.formattedName = name.toUpperCase();
 
         refreshMaxPlayers();
         this.subQueues = plugin.config().newSubQueues();
@@ -96,12 +97,12 @@ public class Queue {
         if (player.getCurrentServer().map(server -> server.getServerInfo().getName()).orElse("unknown").equalsIgnoreCase(this.name))
             return;
 
-        player.sendMessage(Component.text("You are being sent to " + formattedName + "...", NamedTextColor.GREEN));
+        player.sendActionBar(Component.text("Sending to " + formattedName + "...", NamedTextColor.GRAY));
         Main.debug("Sending " + player.getUsername() + " to " + formattedName + " via the " + queue.name()+ " queue.");
 
         player.createConnectionRequest(server).connect().thenAccept(result -> {
             if (result.isSuccessful()) {
-                player.sendMessage(Component.text("You have been sent to " + formattedName + ".", NamedTextColor.GREEN));
+                //player.sendMessage(Component.text("You have been sent to " + formattedName + ".", NamedTextColor.GREEN));
                 failedAttempts = 0;
                 sendProgressMessages(queue);
                 Main.log(player.getUsername() + " has been sent to " + formattedName + " via queue.");
@@ -155,7 +156,7 @@ public class Queue {
         for (QueuedPlayer player : queue.players()) {
             rememberPosition(player);
 
-            player.sendMessage(Component.text("You are currently in position ", NamedTextColor.YELLOW).append(Component.text(player.position() + 1, NamedTextColor.GREEN).append(Component.text(" of ", NamedTextColor.YELLOW).append(Component.text(queue.players().size(), NamedTextColor.GREEN).append(Component.text(" for " + formattedName + ".", NamedTextColor.YELLOW))))));
+            player.sendActionBar(Component.text("You are currently in position ", NamedTextColor.YELLOW).append(Component.text(player.position() + 1, NamedTextColor.GREEN).append(Component.text("/", NamedTextColor.GRAY).append(Component.text(queue.players().size(), NamedTextColor.GREEN)))));
 
             if (paused)
                 player.sendMessage(Component.text("The queue you are currently in is paused.", NamedTextColor.GRAY));
@@ -200,14 +201,14 @@ public class Queue {
         else
             subQueue.addPlayer(player, index);
 
-        player.sendMessage(Component.text("You have joined the queue for " + formattedName + ".", NamedTextColor.GREEN));
-        player.sendMessage(Component.text("You are currently in position ", NamedTextColor.YELLOW).append(Component.text(player.position() + 1, NamedTextColor.GREEN).append(Component.text(" of ", NamedTextColor.YELLOW).append(Component.text(subQueue.players().size(), NamedTextColor.GREEN)).append(Component.text(".", NamedTextColor.YELLOW)))));
+        //player.sendMessage(Component.text("You have joined the queue for " + formattedName + ".", NamedTextColor.GREEN));
+            //player.sendActionBar(Component.text("You are currently in position ", NamedTextColor.YELLOW).append(Component.text(player.position() + 1, NamedTextColor.GREEN).append(Component.text("/", NamedTextColor.GRAY).append(Component.text(queue.players().size(), NamedTextColor.GREEN)))));
 
         if (!player.priority().message().equals(Component.empty()))
             player.sendMessage(player.priority().message());
 
         if (paused)
-            player.sendMessage(Component.text("The queue you are currently in is paused.", NamedTextColor.GRAY));
+            player.sendMessage(Component.text("The queue you are currently in is paused.", NamedTextColor.RED));
     }
 
     public int insertionIndex(QueuedPlayer player, SubQueue subQueue) {

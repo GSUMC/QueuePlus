@@ -205,7 +205,10 @@ public class Main {
             Queue queue = queue(target);
             if (queue != null) {
                 debug(event.getPlayer().getUsername() + " has been automatically queued for " + target + ".");
-                event.getPlayer().sendMessage(Component.text("You are being automatically queued for " + queue.getServerFormatted() + ".", NamedTextColor.GREEN));
+                event.getPlayer().sendMessage(Component.text("You are being automatically queued into", NamedTextColor.GRAY).append(Component.text(queue.getServerFormatted(), NamedTextColor.YELLOW))
+                        .append(Component.text("!", NamedTextColor.GRAY)));
+
+                //event.getPlayer().sendActionBar(Component.text("You are being automatically queued for " + queue.getServerFormatted() + ".", NamedTextColor.GREEN));
                 queue.enqueue(player);
             }
         }).delay(config.autoQueueSettings().delay(), TimeUnit.SECONDS).schedule());
